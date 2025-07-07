@@ -73,6 +73,36 @@ export class Main {
       title: 'Pizza Yolo',
       img: 'https://eda.yandex/images/3518584/d38679646bbbc39e41353ab40259c92e-648x312.jpg',
       order: 'Order',
-    }
+    },
+    {
+      id: 12,
+      title: 'Veg Harmony Cafe',
+      img: 'https://eda.yandex/images/13873613/bdbba0113f0d497b99d7d4d8503e401d-648x312.jpg',
+      order: 'Order',
+    },
+    {
+      id: 13,
+      title: 'Mangal Master',
+      img: 'https://eda.yandex/images/1463280/87b1d262880253815e88ebe158500a34-648x312.jpeg',
+      order: 'Order',
+    },
+    {
+      id: 14,
+      title: 'Cheezus',
+      img: 'https://eda.yandex/images/3490335/8ed66b0c9b794ab9876f6e25e5ab00ff-648x312.jpg',
+      order: 'Order',
+    },
+    {
+      id: 14,
+      title: 'Fork',
+      img: 'https://eda.yandex/images/3808326/004ac9002723d63c05c1e6620c1671db-648x312.jpg',
+      order: 'Order',
+    },
+    {
+      id: 14,
+      title: 'Grill Kebab BBQ',
+      img: 'https://eda.yandex/images/13802765/520cb74adc264a2a91e6cce36246e132-648x312.jpg',
+      order: 'Order',
+    },
   ]
 }

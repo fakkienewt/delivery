@@ -23,15 +23,16 @@
             Lunches
         </div>
         <div class="menu-main-sort">
-            <div class="menu main-sort-menu">Sort</div>
+            <div class="main-sort-menu">Sort</div>
         </div>
     </div>
     <div class="list-of-restaurants">
         <div *ngFor="let rest of restaurants" class="restaurant">
             <img class="picture-rest" src="{{rest.img}}" />
             <div class="info-rest">
-                {{rest.title}}
-
+                <div class="title-class">{{ rest.title }}</div>
+                <br>
+                <div class="order-class">{{ rest.order }}</div>
             </div>
         </div>
     </div>
