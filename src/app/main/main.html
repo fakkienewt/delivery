@@ -1,0 +1,38 @@
+<div>
+    <div class="main-title-text">Restaurants</div>
+    <div class="main-menu">
+        <div class="menu">
+            All
+        </div>
+        <div class="menu">
+            Sushi
+        </div>
+        <div class="menu">
+            Burgers
+        </div>
+        <div class="menu">
+            Pizza
+        </div>
+        <div class="menu">
+            Pasta
+        </div>
+        <div class="menu">
+            Breakfasts
+        </div>
+        <div class="menu">
+            Lunches
+        </div>
+        <div class="menu-main-sort">
+            <div class="menu main-sort-menu">Sort</div>
+        </div>
+    </div>
+    <div class="list-of-restaurants">
+        <div *ngFor="let rest of restaurants" class="restaurant">
+            <img class="picture-rest" src="{{rest.img}}" />
+            <div class="info-rest">
+                {{rest.title}}
+
+            </div>
+        </div>
+    </div>
+</div>

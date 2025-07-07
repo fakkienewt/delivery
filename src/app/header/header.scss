@@ -1,0 +1,38 @@
+.header-main-div {
+    display: flex;
+    background: #5271C0;
+    padding: 50px;
+    margin: 0;
+    border-radius: 15px;
+    border: 2px solid black;
+    box-shadow: (6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px 0px inset;
+}
+
+.header-input-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    flex-grow: 1;
+    box-shadow: (6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px 0px inset;
+}
+
+.header-input-search {
+    display: block;
+    font-family: cursive;
+    font-weight: 600;
+    padding: 10px;
+    width: 530px;
+    height: 15px;
+    border-radius: 10px;
+    font-size: 15px;
+    box-shadow: (6, 24, 44, 0.4) 0px 0px 0px 2px, rgba(6, 24, 44, 0.65) 0px 4px 6px -1px, rgba(255, 255, 255, 0.08) 0px 1px 0px 0px inset;
+}
+
+.header-button-search {
+    background: #95B2F8;
+    border-radius: 10px;
+    padding: 10px;
+    font-family: cursive;
+    font-weight: 600;
+}
