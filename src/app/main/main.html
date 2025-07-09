@@ -32,7 +32,7 @@
             <div class="info-rest">
                 <div class="title-class">{{ rest.title }}</div>
                 <br>
-                <div class="order-class">{{ rest.order }}</div>
+                <div class="order-class" (click)="onRestaurantClick(rest.id)">Order</div>
             </div>
         </div>
     </div>

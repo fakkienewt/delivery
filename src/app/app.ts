@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
@@ -7,5 +9,12 @@ import { Component } from '@angular/core';
   styleUrl: './app.scss'
 })
 export class App{
-  
+  constructor(private router: Router, private myService: AppService){
+
+  }
+
+  func(): void {
+    this.router.navigate(['rest', 15]);
+    this.myService.getMenu(0);
+  }
 }

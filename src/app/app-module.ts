@@ -6,21 +6,25 @@ import { App } from './app';
 import { Header } from './header/header';
 import { Main } from './main/main';
 import { Footer } from './footer/footer';
+import { RestaurantPage } from './restaurant-page/restaurant-page';
+import { AppService } from './app.service';
 
 @NgModule({
   declarations: [
     App,
     Header,
     Main,
-    Footer
+    Footer,
+    RestaurantPage,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
+    AppService,
   ],
   bootstrap: [App]
 })
