@@ -15,6 +15,5 @@ export class App{
 
   func(): void {
     this.router.navigate(['rest', 15]);
-    this.myService.getMenu(0);
   }
 }

@@ -8,6 +8,7 @@ import { Main } from './main/main';
 import { Footer } from './footer/footer';
 import { RestaurantPage } from './restaurant-page/restaurant-page';
 import { AppService } from './app.service';
+import { RestaurantCategories } from './restaurant-page/restaurant-categories/restaurant-categories';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { AppService } from './app.service';
     Main,
     Footer,
     RestaurantPage,
+    RestaurantCategories,
   ],
   imports: [
     BrowserModule,

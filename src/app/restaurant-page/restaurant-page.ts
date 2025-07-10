@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnChanges, OnInit, SimpleChanges } from '@ang
 import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../app.service';
 import { MenuItem } from '../models/MenuItem';
+import { MenuCategory } from '../models/MenuCategory';
 
 @Component({
   selector: 'app-restaurant-page',
@@ -9,11 +10,13 @@ import { MenuItem } from '../models/MenuItem';
   templateUrl: './restaurant-page.html',
   styleUrl: './restaurant-page.scss'
 })
-export class RestaurantPage implements OnInit {
-  isLoading: boolean;
-  menu: MenuItem[];
 
+export class RestaurantPage implements OnInit {
+  menu: MenuItem[];
+  categories: MenuCategory[];
   rest: { title: string, img: string };
+
+  selectedCategoryId: number;
 
   get restImg(): string {
     return this.rest.img;
@@ -27,14 +30,13 @@ export class RestaurantPage implements OnInit {
 
   }
   ngOnInit(): void {
-    this.isLoading = true;
-
     const restId = +(this.route.snapshot.paramMap.get('id') || 0);
-    console.log(restId);
-    this.menu = this.appService.getMenu(restId);
     this.rest = this.appService.getRestaurant(restId);
-    
-    console.log(this.menu);
+    this.categories = this.appService.getCategories(restId);
+    this.selectedCategoryId = this.categories[0].catId;
   }
 
+  onCategoryChanged(id: number): void {
+    this.selectedCategoryId = id;
+  }
 }

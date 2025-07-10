@@ -1,9 +1,14 @@
 <div class="main-input-search-menu">
-    <div class="img-rest">
-        <img src="{{restImg}}" />
+    <div class="categories-container">
+        <app-restaurant-categories [categories]="categories" [selectedCategoryId]="selectedCategoryId"
+            (categoryChanged)="onCategoryChanged($event)">
+        </app-restaurant-categories>
     </div>
-    {{restTitle}}
-    <input class="input-search-menu" type="text" placeholder="Find it in a restaurant">
-</div>
-<div>
+    <div class="img-rest-container">
+        <div class="img-rest">
+            <img src="{{restImg}}" class="image-class" />
+            <div class="rest-title">{{restTitle}}</div>
+        </div>
+    </div>
+    <div class="cart">Cart:</div>
 </div>
