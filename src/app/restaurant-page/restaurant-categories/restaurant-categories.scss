@@ -1,4 +1,6 @@
 .category-items {
+    display: flex;
+    flex-direction: column;
     background: white;
     padding: 32px 45px 32px 45px;
     border-radius: 25px;

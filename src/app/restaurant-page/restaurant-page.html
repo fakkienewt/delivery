@@ -1,14 +1,33 @@
 <div class="main-input-search-menu">
-    <div class="categories-container">
-        <app-restaurant-categories [categories]="categories" [selectedCategoryId]="selectedCategoryId"
-            (categoryChanged)="onCategoryChanged($event)">
-        </app-restaurant-categories>
-    </div>
+    <app-restaurant-categories [categories]="categories"
+        [selectedCategoryId]="selectedCategoryId"
+        (categoryChanged)="onCategoryChanged($event)"
+        class="categories-container">
+    </app-restaurant-categories>
     <div class="img-rest-container">
         <div class="img-rest">
-            <img src="{{restImg}}" class="image-class" />
+            <img src="{{restImg}}"
+                class="image-class" />
             <div class="rest-title">{{restTitle}}</div>
         </div>
+        <div>
+            <div *ngFor="let cat of categoryWithItems">
+                <div class="category-title">{{cat.catTitle}}</div>
+                <div class="goods">
+                    <div *ngFor="let item of cat.items"
+                        class="item">
+                        <img src="{{item.image}}"
+                            class="image" />
+                        <div class="item-cat">
+                            <div class="title">{{item.title}}</div>
+                            <div class="price">${{item.price}}</div>
+                            <div (click)="onAddItem(item.id)"
+                                class="button-add"> ADD </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="cart">Cart:</div>
+    <app-cart></app-cart>
 </div>

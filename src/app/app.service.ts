@@ -1,7 +1,18 @@
+import { CategoryWithItems } from "./models/CategoryWithItems";
 import { MenuCategory } from "./models/MenuCategory";
 import { MenuItem } from "./models/MenuItem";
 
 export class AppService {
+    findItem(restId: number, itemId: number): MenuItem {
+        const rest = this.restaurants.find(r => r.id === restId)!;
+        const menuItem = rest.menu?.find(item => item.itemId === itemId)!;
+        return {
+            id: menuItem.itemId,
+            title: menuItem.itemTitle,
+            price: menuItem.price,
+            image: menuItem.img,
+        };
+    }
     getRestaurants(): { id: number, title: string, img: string }[] {
         return this.restaurants.map(r => ({
             id: r.id,
@@ -23,15 +34,28 @@ export class AppService {
         })) ?? [];
     }
 
-    printMenu(restId: number): MenuItem[] {
+    getCategoriesWithItems(restId: number): CategoryWithItems[] {
         const restaurant = this.restaurants.find(r => r.id === restId);
         if (!restaurant) return [];
-        return restaurant.menu?.map(item => ({
-            id: item.itemId,
-            title: item.itemTitle,
-            img: item.img,
-            price: item.price
-        })) ?? [];
+        if (!restaurant.categories) return [];
+        const result: CategoryWithItems[] = [];
+
+        for (let cat of restaurant.categories) {
+            const catWithItems = new CategoryWithItems();
+            result.push(catWithItems);
+            catWithItems.catId = cat.catId;
+            catWithItems.catTitle = cat.title;
+            catWithItems.items = restaurant.menu
+                .filter(item => item.categories.includes(cat.catId))
+                .map(item => ({
+                    id: item.itemId,
+                    title: item.itemTitle,
+                    price: item.price,
+                    image: item.img,
+                }));
+        }
+
+        return result;
     }
 
     public restaurants = [
@@ -59,7 +83,7 @@ export class AppService {
                 },
                 {
                     catId: 5,
-                    title: 'Hot-drinks',
+                    title: 'Hot-Drinks',
                 },
                 {
                     catId: 6,
@@ -103,20 +127,6 @@ export class AppService {
                     categories: [1],
                 },
                 {
-                    itemId: 6,
-                    itemTitle: 'Mushroom Swiss Burger',
-                    price: 6.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=dc62b92c4b6402fdb20fb49dd1ee0f68_l-11924570-images-thumbs&n=13',
-                    categories: [1],
-                },
-                {
-                    itemId: 7,
-                    itemTitle: 'Texas Smokehouse',
-                    price: 7.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=9c4364aec9b493f2e8f675bfa5f03f91_l-5167251-images-thumbs&n=13',
-                    categories: [1],
-                },
-                {
                     itemId: 8,
                     itemTitle: 'Crispy Chicken Burger',
                     price: 5.0,
@@ -124,66 +134,10 @@ export class AppService {
                     categories: [1],
                 },
                 {
-                    itemId: 9,
-                    itemTitle: 'Angry Whopper',
-                    price: 7.0,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/4389079/pub_6222811a0b02610446aadce9_622289a0ccb30048689a0401/scale_1200',
-                    categories: [1],
-                },
-                {
-                    itemId: 10,
-                    itemTitle: 'Veggie Burger',
-                    price: 6.0,
-                    img: 'https://i.pinimg.com/originals/4c/b4/03/4cb403238a8ece03ecdde6ceb677984a.jpg',
-                    categories: [1],
-                },
-                {
-                    itemId: 11,
-                    itemTitle: 'Bacon King',
-                    price: 7.0,
-                    img: 'https://i.pinimg.com/550x/f5/5b/11/f55b11b6255ae90fd6d301a848b5cbef.jpg',
-                    categories: [1],
-                },
-                {
-                    itemId: 12,
-                    itemTitle: 'California Roll',
-                    price: 11.0,
-                    img: 'https://s.yimg.com/ny/api/res/1.2/ossXgeRgKQLjzs86vW77wQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/chowhound_739/ea0a38727af9d30c280dee972edcb7bc',
-                    categories: [2],
-                },
-                {
                     itemId: 13,
                     itemTitle: 'Philadelphia Roll',
                     price: 10.0,
                     img: 'https://img.dasreda.ru/photo-data/864b9971-21fd-42eb-bff4-300e55cb1ab6/shutterstock_1578894298.jpg',
-                    categories: [2],
-                },
-                {
-                    itemId: 14,
-                    itemTitle: 'Dynamite Roll',
-                    price: 9.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=81e2529f53a6727a43a063310ac99ac8_l-4055439-images-thumbs&n=13',
-                    categories: [2],
-                },
-                {
-                    itemId: 15,
-                    itemTitle: 'Rainbow Roll',
-                    price: 11.0,
-                    img: 'https://avatars.mds.yandex.net/get-altay/2004078/2a00000184ac0a007bc80d9537581b9e6fbb/orig',
-                    categories: [2],
-                },
-                {
-                    itemId: 16,
-                    itemTitle: 'Salmon Lover Roll',
-                    price: 10.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=ebe3d10cfc0aa27dad946e3e9e939c9c_l-4372511-images-thumbs&n=13',
-                    categories: [2],
-                },
-                {
-                    itemId: 17,
-                    itemTitle: 'Tuna Crunch Roll',
-                    price: 11.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=505cbdb2239ed6115129ff967129b162_l-12475310-images-thumbs&n=13',
                     categories: [2],
                 },
                 {
@@ -198,27 +152,6 @@ export class AppService {
                     itemTitle: 'Shrimp Tempura Roll',
                     price: 12.0,
                     img: 'https://static.tildacdn.com/tild3362-3965-4037-b031-326134613739/___.jpg',
-                    categories: [2],
-                },
-                {
-                    itemId: 20,
-                    itemTitle: 'Spider Roll',
-                    price: 13.0,
-                    img: 'https://i0.wp.com/popmenucloud.com/cdn-cgi/image/width=1920,height=1920,format=auto,fit=scale-down/izdtfxbo/c6830e4f-8d8c-41e2-b149-34899b7012fe.jpg?ssl=1',
-                    categories: [2],
-                },
-                {
-                    itemId: 21,
-                    itemTitle: 'Volcano Roll',
-                    price: 14.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=012ab35660de314796572667b99585a921c637b8-12416107-images-thumbs&n=13',
-                    categories: [2],
-                },
-                {
-                    itemId: 22,
-                    itemTitle: 'Fire Roll',
-                    price: 12.0,
-                    img: 'https://avatars.mds.yandex.net/get-mpic/5210379/img_id295341660390599659.jpeg/9',
                     categories: [2],
                 },
                 {
@@ -243,31 +176,10 @@ export class AppService {
                     categories: [2],
                 },
                 {
-                    itemId: 26,
-                    itemTitle: 'Avocado Mango Roll',
-                    price: 17.0,
-                    img: 'https://avatars.mds.yandex.net/get-altay/939994/2a0000018635ce07e8bf714082f86f07544b/XXL_height',
-                    categories: [2],
-                },
-                {
                     itemId: 27,
                     itemTitle: 'French Fries',
                     price: 3.0,
                     img: 'https://avatars.mds.yandex.net/i?id=f60d11b7f133fb988ed2046d9c21634d_l-5451037-images-thumbs&n=13',
-                    categories: [3],
-                },
-                {
-                    itemId: 28,
-                    itemTitle: 'Cheese Fries',
-                    price: 5.0,
-                    img: 'https://wallpapers.com/images/hd/cheesy-french-fries-e21jx4f5zvauhe0m.jpg',
-                    categories: [3],
-                },
-                {
-                    itemId: 29,
-                    itemTitle: 'Bacon Cheese Fries',
-                    price: 6.0,
-                    img: 'https://www.cenariomt.com.br/wp-content/uploads/2023/10/Receita-de-batata-frita-com-cheddar.jpg',
                     categories: [3],
                 },
                 {
@@ -285,38 +197,10 @@ export class AppService {
                     categories: [3],
                 },
                 {
-                    itemId: 32,
-                    itemTitle: 'Crinkle-Cut Fries',
-                    price: 5.0,
-                    img: 'https://m.media-amazon.com/images/I/81cCcm73qcL._AC_UF894,1000_QL80_.jpg',
-                    categories: [3],
-                },
-                {
                     itemId: 33,
                     itemTitle: 'Chili Cheese Fries',
                     price: 7.0,
                     img: 'https://waybackburgers.com/cdn-cgi/imagedelivery/7ZWWcce1zV6LWjfueUGVJg/waybackburgers.com/ChiliCheeseFries_Featured.jpg/w=9999',
-                    categories: [3],
-                },
-                {
-                    itemId: 34,
-                    itemTitle: 'Loaded Fries',
-                    price: 8.0,
-                    img: 'https://thumbs.dreamstime.com/b/double-portion-spicy-fries-beef-mince-potato-seasoned-chili-topping-melted-cheese-close-up-high-angle-two-forks-191885232.jpg',
-                    categories: [3],
-                },
-                {
-                    itemId: 35,
-                    itemTitle: 'Spicy Buffalo Fries',
-                    price: 7.0,
-                    img: 'https://i.ytimg.com/vi/4nTesAViGqM/maxresdefault.jpg',
-                    categories: [3],
-                },
-                {
-                    itemId: 36,
-                    itemTitle: 'Nacho Fries ',
-                    price: 8.0,
-                    img: 'https://media.wtol.com/assets/WKYC/images/ad8ccb6f-7457-4d19-bff3-9abb360307e3/ad8ccb6f-7457-4d19-bff3-9abb360307e3_1920x1080.jpg',
                     categories: [3],
                 },
                 {
@@ -332,34 +216,6 @@ export class AppService {
                     price: 6.0,
                     img: 'https://avatars.dzeninfra.ru/get-zen_doc/108872/pub_5b8406ae0db7b300aa002c92_5b843b2847174c00aab185be/scale_1200',
                     categories: [3],
-                },
-                {
-                    itemId: 39,
-                    itemTitle: 'Poutine',
-                    price: 9.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=c87e012e0d0679a01b7da5eaae4dde0f_l-5161023-images-thumbs&n=13',
-                    categories: [3],
-                },
-                {
-                    itemId: 40,
-                    itemTitle: 'Truffle Fries',
-                    price: 11.0,
-                    img: 'https://egepazarindan.com/wp-content/uploads/2022/12/Truflu-Patates-Kizartmasi--1080x675.jpeg',
-                    categories: [3],
-                },
-                {
-                    itemId: 41,
-                    itemTitle: 'Classic Coca Cola',
-                    price: 2.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=2f5bb3061de77aa4fb9630c3ad5549cd_l-5235971-images-thumbs&n=13',
-                    categories: [4],
-                },
-                {
-                    itemId: 42,
-                    itemTitle: 'Berry Blast Soda',
-                    price: 2.5,
-                    img: 'https://images.ctfassets.net/tlircn1cnxbm/586HcZ1G00A3CvHovLeadO/5f8f89c7a1f1cfcbeb2f2b4a4a3ee702/ice-encore-berry-blast_desktop_fr.jpg',
-                    categories: [4],
                 },
                 {
                     itemId: 43,
@@ -383,6 +239,13 @@ export class AppService {
                     categories: [4],
                 },
                 {
+                    itemId: 55,
+                    itemTitle: 'English Tea',
+                    price: 3.0,
+                    img: 'https://www.picnic-catering.ru/wp-content/uploads/2020/06/chaj-paketirovannyj-1.jpg',
+                    categories: [5],
+                },
+                {
                     itemId: 46,
                     itemTitle: 'Americano',
                     price: 3.0,
@@ -402,97 +265,6 @@ export class AppService {
                     price: 3.0,
                     img: 'https://avatars.mds.yandex.net/i?id=1caa8d5782bbb457d3e6c5c004ce387e_l-2480510-images-thumbs&n=13',
                     categories: [5],
-                },
-                {
-                    itemId: 49,
-                    itemTitle: 'Flat White',
-                    price: 5.0,
-                    img: 'https://assets.gailsbread.co.uk/wp-content/uploads/2017/09/21112832/flat-white-closeup.jpg',
-                    categories: [5],
-                },
-                {
-                    itemId: 50,
-                    itemTitle: 'Caramel Macchiato',
-                    price: 5.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=4f4d1edee826668147181712a57e1776_l-5220723-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 51,
-                    itemTitle: 'Mocha',
-                    price: 6.0,
-                    img: 'https://s.yimg.com/ny/api/res/1.2/g8Y6BvfJB_.jss2IZXypxw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzQ-/https://media.zenfs.com/en/tasting_table_543/9219a74faca36633ef215ab0a6f73cb8',
-                    categories: [5],
-                },
-                {
-                    itemId: 52,
-                    itemTitle: 'Pumpkin Spice Latte',
-                    price: 6.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=8dd30a22b764d92ed7669fbe86d229ab_l-5488376-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 53,
-                    itemTitle: 'Iced Coffee',
-                    price: 4.0,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/1680084/pub_6114e131189dda6592b64287_6114e2baf9261873f65528db/scale_1200',
-                    categories: [5],
-                },
-                {
-                    itemId: 54,
-                    itemTitle: 'Frappuccino',
-                    price: 5.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=94af72f1947d62d6e76039c68cc20c46_l-12936542-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 55,
-                    itemTitle: 'English Breakfast Tea',
-                    price: 3.0,
-                    img: 'https://www.picnic-catering.ru/wp-content/uploads/2020/06/chaj-paketirovannyj-1.jpg',
-                    categories: [5],
-                },
-                {
-                    itemId: 56,
-                    itemTitle: 'Green Tea Matcha Latte',
-                    price: 5.0,
-                    img: 'https://digital.ihg.com/is/image/ihg/yours-truly-dining-call-your-mother-matcha-latte-2x1',
-                    categories: [5],
-                },
-                {
-                    itemId: 57,
-                    itemTitle: 'Chai Latte',
-                    price: 5.0,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_66fa425bc4d8672f950f63c4_66fa4266c4d8672f950f665b/scale_1200',
-                    categories: [5],
-                },
-                {
-                    itemId: 58,
-                    itemTitle: 'Peach Ice Tea',
-                    price: 4.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=81a341d346b2c7177d30871eb000e0fc_l-3931230-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 59,
-                    itemTitle: 'Chocolate Brownie',
-                    price: 5.0,
-                    img: 'https://i.pinimg.com/736x/9a/8a/70/9a8a70a736535b1143dfdffd2eb84f71.jpg',
-                    categories: [6],
-                },
-                {
-                    itemId: 60,
-                    itemTitle: 'New York Cheesecake',
-                    price: 6.0,
-                    img: 'https://i2.wp.com/www.thespruceeats.com/thmb/W-Ur-ceUIwo0XLyBPzT2VwcwgJU=/1500x1000/filters:fill(auto,1)/gluten-free-new-york-cheesecake-1450985-hero-01-dc54f9daf38044238b495c7cefc191fa.jpg',
-                    categories: [6],
-                },
-                {
-                    itemId: 61,
-                    itemTitle: 'Chocolate Chip Cookies',
-                    price: 2.0,
-                    img: 'https://i.ytimg.com/vi/rYPfkR9d3f8/maxresdefault.jpg',
-                    categories: [6],
                 },
                 {
                     itemId: 62,
@@ -516,13 +288,6 @@ export class AppService {
                     categories: [6],
                 },
                 {
-                    itemId: 65,
-                    itemTitle: 'Sundae',
-                    price: 4.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=29611f7f0fb039b4e7062e0f96a3a19d_l-12421862-images-thumbs&n=13',
-                    categories: [6],
-                },
-                {
                     itemId: 66,
                     itemTitle: 'Cinnamon Roll',
                     price: 3.0,
@@ -536,6 +301,32 @@ export class AppService {
             title: 'KFC',
             img: 'https://eda.yandex/images/3772784/363315778e80282c639d899dfc8819e4-648x312.jpg',
             order: 'Order',
+            categories: [
+                {
+                    catId: 1,
+                    title: 'Burgers',
+                },
+                {
+                    catId: 7,
+                    title: 'Chicken',
+                },
+                {
+                    catId: 3,
+                    title: 'Fries',
+                },
+                {
+                    catId: 4,
+                    title: 'Lemonades',
+                },
+                {
+                    catId: 5,
+                    title: 'Hot-Drinks',
+                },
+                {
+                    catId: 6,
+                    title: 'Desserts',
+                },
+            ],
             menu: [
                 {
                     itemId: 1,
@@ -566,62 +357,6 @@ export class AppService {
                     categories: [1],
                 },
                 {
-                    itemId: 5,
-                    itemTitle: 'Spicy Chicken Burger',
-                    price: 6.0,
-                    img: 'https://miro.medium.com/v2/resize:fit:1000/1*kI2IsBRTQyc3uYSeJnPgzA.jpeg',
-                    categories: [1],
-                },
-                {
-                    itemId: 6,
-                    itemTitle: 'Mushroom Swiss Burger',
-                    price: 6.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=dc62b92c4b6402fdb20fb49dd1ee0f68_l-11924570-images-thumbs&n=13',
-                    categories: [1],
-                },
-                {
-                    itemId: 7,
-                    itemTitle: 'Texas Smokehouse',
-                    price: 7.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=9c4364aec9b493f2e8f675bfa5f03f91_l-5167251-images-thumbs&n=13',
-                    categories: [1],
-                },
-                {
-                    itemId: 8,
-                    itemTitle: 'Crispy Chicken Burger',
-                    price: 5.0,
-                    img: 'https://static.vecteezy.com/system/resources/previews/030/353/845/non_2x/crispy-chicken-burger-ai-generated-photo.jpg',
-                    categories: [1],
-                },
-                {
-                    itemId: 9,
-                    itemTitle: 'Angry Whopper',
-                    price: 7.0,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/4389079/pub_6222811a0b02610446aadce9_622289a0ccb30048689a0401/scale_1200',
-                    categories: [1],
-                },
-                {
-                    itemId: 10,
-                    itemTitle: 'Veggie Burger',
-                    price: 6.0,
-                    img: 'https://i.pinimg.com/originals/4c/b4/03/4cb403238a8ece03ecdde6ceb677984a.jpg',
-                    categories: [1],
-                },
-                {
-                    itemId: 11,
-                    itemTitle: 'Bacon King',
-                    price: 7.0,
-                    img: 'https://i.pinimg.com/550x/f5/5b/11/f55b11b6255ae90fd6d301a848b5cbef.jpg',
-                    categories: [1],
-                },
-                {
-                    itemId: 67,
-                    itemTitle: 'Original Recipe Chicken',
-                    price: 4.0,
-                    img: 'https://www.mashed.com/img/gallery/someone-once-found-this-breaded-organ-in-a-kfc-meal/l-intro-1641311561.jpg',
-                    categories: [7],
-                },
-                {
                     itemId: 68,
                     itemTitle: 'Hot & Spicy Wings',
                     price: 6.0,
@@ -641,20 +376,6 @@ export class AppService {
                     price: 6.5,
                     img: 'https://www.kfc-suisse.ch/fileadmin/_processed_/6/d/csm_mood_original_bucket_716d606391.jpg',
                     categories: [7],
-                },
-                {
-                    itemId: 41,
-                    itemTitle: 'Classic Coca Cola',
-                    price: 2.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=2f5bb3061de77aa4fb9630c3ad5549cd_l-5235971-images-thumbs&n=13',
-                    categories: [4],
-                },
-                {
-                    itemId: 42,
-                    itemTitle: 'Berry Blast Soda',
-                    price: 2.5,
-                    img: 'https://images.ctfassets.net/tlircn1cnxbm/586HcZ1G00A3CvHovLeadO/5f8f89c7a1f1cfcbeb2f2b4a4a3ee702/ice-encore-berry-blast_desktop_fr.jpg',
-                    categories: [4],
                 },
                 {
                     itemId: 43,
@@ -678,10 +399,10 @@ export class AppService {
                     categories: [4],
                 },
                 {
-                    itemId: 46,
-                    itemTitle: 'Americano',
+                    itemId: 55,
+                    itemTitle: 'English Tea',
                     price: 3.0,
-                    img: 'https://galata-restaurant.ru/wp-content/uploads/2022/11/kofe-i-kofejnye-zerna.jpg',
+                    img: 'https://www.picnic-catering.ru/wp-content/uploads/2020/06/chaj-paketirovannyj-1.jpg',
                     categories: [5],
                 },
                 {
@@ -699,87 +420,10 @@ export class AppService {
                     categories: [5],
                 },
                 {
-                    itemId: 49,
-                    itemTitle: 'Flat White',
-                    price: 5.0,
-                    img: 'https://assets.gailsbread.co.uk/wp-content/uploads/2017/09/21112832/flat-white-closeup.jpg',
-                    categories: [5],
-                },
-                {
-                    itemId: 50,
-                    itemTitle: 'Caramel Macchiato',
-                    price: 5.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=4f4d1edee826668147181712a57e1776_l-5220723-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 51,
-                    itemTitle: 'Mocha',
-                    price: 6.0,
-                    img: 'https://s.yimg.com/ny/api/res/1.2/g8Y6BvfJB_.jss2IZXypxw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzQ-/https://media.zenfs.com/en/tasting_table_543/9219a74faca36633ef215ab0a6f73cb8',
-                    categories: [5],
-                },
-                {
-                    itemId: 52,
-                    itemTitle: 'Pumpkin Spice Latte',
-                    price: 6.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=8dd30a22b764d92ed7669fbe86d229ab_l-5488376-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 53,
-                    itemTitle: 'Iced Coffee',
-                    price: 4.0,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/1680084/pub_6114e131189dda6592b64287_6114e2baf9261873f65528db/scale_1200',
-                    categories: [5],
-                },
-                {
-                    itemId: 54,
-                    itemTitle: 'Frappuccino',
-                    price: 5.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=94af72f1947d62d6e76039c68cc20c46_l-12936542-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
-                    itemId: 55,
-                    itemTitle: 'English Breakfast Tea',
-                    price: 3.0,
-                    img: 'https://www.picnic-catering.ru/wp-content/uploads/2020/06/chaj-paketirovannyj-1.jpg',
-                    categories: [5],
-                },
-                {
-                    itemId: 56,
-                    itemTitle: 'Green Tea Matcha Latte',
-                    price: 5.0,
-                    img: 'https://digital.ihg.com/is/image/ihg/yours-truly-dining-call-your-mother-matcha-latte-2x1',
-                    categories: [5],
-                },
-                {
-                    itemId: 57,
-                    itemTitle: 'Chai Latte',
-                    price: 5.0,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_66fa425bc4d8672f950f63c4_66fa4266c4d8672f950f665b/scale_1200',
-                    categories: [5],
-                },
-                {
-                    itemId: 58,
-                    itemTitle: 'Peach Ice Tea',
-                    price: 4.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=81a341d346b2c7177d30871eb000e0fc_l-3931230-images-thumbs&n=13',
-                    categories: [5],
-                },
-                {
                     itemId: 27,
                     itemTitle: 'French Fries',
                     price: 3.0,
                     img: 'https://avatars.mds.yandex.net/i?id=f60d11b7f133fb988ed2046d9c21634d_l-5451037-images-thumbs&n=13',
-                    categories: [3],
-                },
-                {
-                    itemId: 28,
-                    itemTitle: 'Cheese Fries',
-                    price: 5.0,
-                    img: 'https://wallpapers.com/images/hd/cheesy-french-fries-e21jx4f5zvauhe0m.jpg',
                     categories: [3],
                 },
                 {
@@ -804,20 +448,6 @@ export class AppService {
                     categories: [3],
                 },
                 {
-                    itemId: 32,
-                    itemTitle: 'Crinkle-Cut Fries',
-                    price: 5.0,
-                    img: 'https://m.media-amazon.com/images/I/81cCcm73qcL._AC_UF894,1000_QL80_.jpg',
-                    categories: [3],
-                },
-                {
-                    itemId: 33,
-                    itemTitle: 'Chili Cheese Fries',
-                    price: 7.0,
-                    img: 'https://waybackburgers.com/cdn-cgi/imagedelivery/7ZWWcce1zV6LWjfueUGVJg/waybackburgers.com/ChiliCheeseFries_Featured.jpg/w=9999',
-                    categories: [3],
-                },
-                {
                     itemId: 34,
                     itemTitle: 'Loaded Fries',
                     price: 8.0,
@@ -829,13 +459,6 @@ export class AppService {
                     itemTitle: 'Spicy Buffalo Fries',
                     price: 7.0,
                     img: 'https://i.ytimg.com/vi/4nTesAViGqM/maxresdefault.jpg',
-                    categories: [3],
-                },
-                {
-                    itemId: 36,
-                    itemTitle: 'Nacho Fries ',
-                    price: 8.0,
-                    img: 'https://media.wtol.com/assets/WKYC/images/ad8ccb6f-7457-4d19-bff3-9abb360307e3/ad8ccb6f-7457-4d19-bff3-9abb360307e3_1920x1080.jpg',
                     categories: [3],
                 },
                 {
@@ -853,18 +476,25 @@ export class AppService {
                     categories: [3],
                 },
                 {
-                    itemId: 39,
-                    itemTitle: 'Poutine',
-                    price: 9.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=c87e012e0d0679a01b7da5eaae4dde0f_l-5161023-images-thumbs&n=13',
-                    categories: [3],
+                    itemId: 62,
+                    itemTitle: 'Red Velvet Cake',
+                    price: 8.0,
+                    img: 'https://avatars.mds.yandex.net/i?id=71097f648301335bb04dec6700b6ebfd_l-5887216-images-thumbs&n=13',
+                    categories: [6],
                 },
                 {
-                    itemId: 40,
-                    itemTitle: 'Truffle Fries',
-                    price: 11.0,
-                    img: 'https://egepazarindan.com/wp-content/uploads/2022/12/Truflu-Patates-Kizartmasi--1080x675.jpeg',
-                    categories: [3],
+                    itemId: 63,
+                    itemTitle: 'Carrot Cake',
+                    price: 7.0,
+                    img: 'https://image.winudf.com/v2/image1/Y29tLndhbGxwYXBlcnNoYWxsLmNha2UxX3NjcmVlbl82XzE2MzQzMTg2MzBfMDUy/screen-6.jpg?fakeurl=1&type=.jpg',
+                    categories: [6],
+                },
+                {
+                    itemId: 64,
+                    itemTitle: 'Ice Cream Waffle Bowl',
+                    price: 7.5,
+                    img: 'https://xoxobella.com/wp-content/uploads/2022/06/easy_brownie_sundae_waffle_bowls-054.jpg',
+                    categories: [6],
                 },
             ],
         },
@@ -873,293 +503,196 @@ export class AppService {
             title: 'Gan Bei',
             img: 'https://eda.yandex/images/2796335/1f85f1696ffd42259de282b73cb7af48-648x312.jpg',
             order: 'Order',
+            categories: [
+                {
+                    catId: 1,
+                    title: 'Asian Food',
+                },
+                {
+                    catId: 2,
+                    title: 'Vegetable Dishes',
+                },
+                {
+                    catId: 3,
+                    title: 'Salads',
+                },
+                {
+                    catId: 4,
+                    title: 'Soups',
+                },
+                {
+                    catId: 5,
+                    title: 'Fish Dishes',
+                },
+            ],
             menu: [
                 {
                     itemId: 71,
                     itemTitle: 'Pad Thai',
                     price: 11.0,
                     img: 'https://i.pinimg.com/736x/3e/07/8c/3e078c4c6f4a84a8bbc0cd953b61fecc.jpg',
-                    categories: [8],
+                    categories: [1],
                 },
                 {
                     itemId: 72,
                     itemTitle: 'Ramen',
                     price: 9.0,
                     img: 'https://www.tokyoweekender.com/wp-content/uploads/2024/03/shutterstock_1834868050.jpg',
-                    categories: [8],
+                    categories: [1],
                 },
                 {
                     itemId: 73,
                     itemTitle: 'Gyoza',
                     price: 7.5,
                     img: 'https://cdn.nur.kz/images/1200x675/495868feac16cd91.jpeg',
-                    categories: [8],
+                    categories: [1],
                 },
                 {
                     itemId: 74,
                     itemTitle: 'Bibimbap ',
                     price: 10.0,
                     img: 'https://avatars.mds.yandex.net/i?id=3374dbefa0fbedb02c7f89234bfc125feb92af27-4570299-images-thumbs&n=13',
-                    categories: [8],
+                    categories: [1],
                 },
                 {
                     itemId: 75,
                     itemTitle: 'Sushi Combo',
                     price: 12.0,
                     img: 'https://i.pinimg.com/originals/85/cd/15/85cd15286b53a3e15cf31976d6ba3935.jpg',
-                    categories: [8],
+                    categories: [1],
                 },
                 {
                     itemId: 76,
                     itemTitle: 'Grilled Veggie Plate',
                     price: 8.5,
                     img: 'https://v.wpimg.pl/NzYyMTY2YRs4GztndklsDntDbz0wEGJYLFt3dnYDfEJpAWIyMF4rCDwJIno-QDsKOA49eileYRspEGIiaB0qEyoJITUgHSsXOxwpe2sBfUk6HShidAd-TD1UeWRgC2NCYUl0eWxWKE1vS3xibwUtGHsE',
-                    categories: [9],
+                    categories: [2],
                 },
                 {
                     itemId: 77,
                     itemTitle: 'Stuffed Bell Peppers',
                     price: 9.0,
                     img: 'https://i.pinimg.com/originals/7b/47/53/7b47539081a0ef18be5c81e1c6ed659f.jpg',
-                    categories: [9],
-                },
-                {
-                    itemId: 78,
-                    itemTitle: 'Ratatouille',
-                    price: 10.5,
-                    img: 'https://cdn.lifehacker.ru/wp-content/uploads/2023/07/shutterstock_2212993023_1690454639.jpeg',
-                    categories: [9],
+                    categories: [2],
                 },
                 {
                     itemId: 79,
                     itemTitle: 'Falafel Wrap',
                     price: 6.0,
                     img: 'https://i.ytimg.com/vi/LKXQkdo1_U0/maxresdefault.jpg',
-                    categories: [9],
+                    categories: [2],
                 },
                 {
                     itemId: 80,
                     itemTitle: 'Vegetable Curry',
                     price: 8.0,
                     img: 'https://vietcafealmaty.kz/wp-content/uploads/2021/10/5aa1fa46-e04a-4aa0-9930-c8238ffc1fbb.jpeg',
-                    categories: [9],
-                },
-                {
-                    itemId: 81,
-                    itemTitle: 'Mushroom Risotto',
-                    price: 11.0,
-                    img: 'https://i.pinimg.com/originals/9a/20/4a/9a204a9aa6a6b16d82c6e99c30c8bbf0.jpg',
-                    categories: [9],
-                },
-                {
-                    itemId: 82,
-                    itemTitle: 'Cauliflower Wings',
-                    price: 7.5,
-                    img: 'https://avatars.mds.yandex.net/i?id=21e874ae683a3eee8ae9cbcb2b95d26d_l-9180973-images-thumbs&n=13',
-                    categories: [9],
-                },
-                {
-                    itemId: 83,
-                    itemTitle: 'Avocado Toast',
-                    price: 5.0,
-                    img: 'https://i.lefood.menu/wp-content/uploads/w_images/2022/04/recept-39658-1240x827.jpg',
-                    categories: [9],
-                },
-                {
-                    itemId: 84,
-                    itemTitle: 'Sweet Potato Fries',
-                    price: 4.5,
-                    img: 'https://avatars.mds.yandex.net/i?id=8b9d32901a342e9d5498c8dc53a3675b_l-11043615-images-thumbs&n=13',
-                    categories: [9],
+                    categories: [2],
                 },
                 {
                     itemId: 85,
                     itemTitle: 'Quinoa Salad',
                     price: 9.0,
                     img: 'https://i.pinimg.com/originals/09/6c/6d/096c6d87e065dd9e22eb870c79f6a92e.jpg',
-                    categories: [9],
+                    categories: [2],
                 },
                 {
                     itemId: 86,
                     itemTitle: 'Greek Salad',
                     price: 6.0,
                     img: 'https://scdn.chibbis.ru/live/products/8509ef6c3420e8494ee110991e351f4f.jpeg',
-                    categories: [10],
+                    categories: [3],
                 },
                 {
                     itemId: 87,
                     itemTitle: 'Caesar Salad',
                     price: 7.5,
                     img: 'https://s.yimg.com/ny/api/res/1.2/Ti6jdt1N_r8l.kSwEgX5xg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/tasting_table_543/2cb242634400b64ae15db6647ec2813d',
-                    categories: [10],
+                    categories: [3],
                 },
                 {
                     itemId: 88,
                     itemTitle: 'Asian Slaw',
                     price: 8.0,
                     img: 'https://hips.hearstapps.com/hmg-prod/images/delish-230313-23-thai-style-slaw-1985-eb-index-64251529cd4e0.jpg?crop=1.00xw:1.00xh;0,0&resize=1200:*',
-                    categories: [10],
+                    categories: [3],
                 },
                 {
                     itemId: 89,
                     itemTitle: 'Caprese Salad',
                     price: 8.2,
                     img: 'https://s.yimg.com/ny/api/res/1.2/.R5t0cm0Orh0x1ALJzJusg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02Nzc-/https://media.zenfs.com/en/chowhound_739/bc382b55f30c34029fd950d6dce10658',
-                    categories: [10],
+                    categories: [3],
                 },
                 {
                     itemId: 90,
                     itemTitle: 'Tom Yum',
                     price: 8.4,
                     img: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1wUIz4.img?w=1600&h=900&m=4&q=79',
-                    categories: [11],
+                    categories: [4],
                 },
                 {
                     itemId: 91,
                     itemTitle: 'Minestrone',
                     price: 4.8,
                     img: 'https://avatars.dzeninfra.ru/get-zen_doc/271828/pub_662160f82d4e14129540be22_662161ab824b084ed774ffd2/scale_1200',
-                    categories: [11],
+                    categories: [4],
                 },
                 {
                     itemId: 92,
                     itemTitle: 'MineLentil Soupstrone',
                     price: 4.8,
                     img: 'https://s.yimg.com/ny/api/res/1.2/SmllJqFw._MQOGIWdByC0Q--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTQ4MA--/https://media.zenfs.com/en/delish_597/6b448520ec11a21fc2f130e5729723c1',
-                    categories: [11],
+                    categories: [4],
                 },
                 {
                     itemId: 93,
                     itemTitle: 'Miso Soup',
                     price: 5.0,
                     img: 'https://i.pinimg.com/originals/00/fc/1c/00fc1c69f0dacc297b0876d18490f18a.jpg',
-                    categories: [11],
+                    categories: [4],
                 },
                 {
                     itemId: 94,
                     itemTitle: 'Creamy Mushroom Soup',
                     price: 6.8,
                     img: 'https://avatars.mds.yandex.net/i?id=17d99378b864da5b958800dba14c59a7_l-5222088-images-thumbs&n=13',
-                    categories: [11],
+                    categories: [4],
                 },
                 {
                     itemId: 95,
                     itemTitle: 'Grilled Salmon',
                     price: 13.1,
                     img: 'https://avatars.mds.yandex.net/i?id=5fa66d3fc0831b9065da401e348727a46476d907-4288990-images-thumbs&n=13',
-                    categories: [12],
+                    categories: [5],
                 },
                 {
                     itemId: 96,
                     itemTitle: 'Fish & Chips',
                     price: 14.0,
                     img: 'https://cdn.lifehacker.ru/wp-content/uploads/2024/03/303_1711123887.jpg',
-                    categories: [12],
+                    categories: [5],
                 },
                 {
                     itemId: 97,
                     itemTitle: 'Garlic Butter Shrimp',
                     price: 16.5,
                     img: 'https://i.ytimg.com/vi/t-xM807ZV6w/maxresdefault.jpg',
-                    categories: [12],
+                    categories: [5],
                 },
                 {
                     itemId: 98,
                     itemTitle: 'Seafood Paella',
                     price: 23.7,
                     img: 'https://www.unileverfoodsolutions.ca/dam/global-ufs/mcos/nam/ufs-website/article-page/1260x741_Paella.jpg',
-                    categories: [12],
-                },
-                {
-                    itemId: 99,
-                    itemTitle: 'Calamari Rings',
-                    price: 11.9,
-                    img: 'https://s.yimg.com/ny/api/res/1.2/rxafRb28R86.nXOv.gaRWA--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTUzOQ--/https://media.zenfs.com/en/the_takeout_667/9a3ebb8a4fc977494ed0e033d8aa5ddf',
-                    categories: [12],
-                },
-                {
-                    itemId: 100,
-                    itemTitle: 'Miso-Glazed Cod',
-                    price: 16.7,
-                    img: 'https://i.pinimg.com/originals/81/ab/11/81ab111c6b9fb10256048588762656e9.jpg',
-                    categories: [12],
-                },
-                {
-                    itemId: 101,
-                    itemTitle: 'Lobster Roll',
-                    price: 27.4,
-                    img: 'https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AA1xWS2m.img?w=1000&h=667&m=4&q=99',
-                    categories: [12],
+                    categories: [5],
                 },
                 {
                     itemId: 102,
                     itemTitle: 'Scallops with Risotto',
                     price: 23.7,
                     img: 'https://i.ytimg.com/vi/TdyeTK-hJhA/maxresdefault.jpg',
-                    categories: [12],
-                },
-                {
-                    itemId: 103,
-                    itemTitle: 'Truffle Mashed Potatoes',
-                    price: 22.1,
-                    img: 'https://ic-cdn.flipboard.com/kentucky.com/8dfb0c0d957a3a324a55664b8245d289974dfda4/_large.jpeg',
-                    categories: [13],
-                },
-                {
-                    itemId: 104,
-                    itemTitle: 'Grilled Asparagus',
-                    price: 13.0,
-                    img: 'https://i.pinimg.com/originals/8a/2a/c0/8a2ac0c8e4428978a25a51494a298de6.jpg',
-                    categories: [13],
-                },
-                {
-                    itemId: 105,
-                    itemTitle: 'Coconut Rice',
-                    price: 6.5,
-                    img: 'https://avatars.dzeninfra.ru/get-zen_doc/1712971/pub_5ea75a907e79087ec3665df9_5eadebee34cbba0565c69e19/scale_1200',
-                    categories: [13],
-                },
-                {
-                    itemId: 106,
-                    itemTitle: 'Grilled Corn',
-                    price: 5.8,
-                    img: 'https://luding.ru/upload/medialibrary/80c/80cc185ff70b6fc986659ec8fb288495.jpg',
-                    categories: [13],
-                },
-                {
-                    itemId: 107,
-                    itemTitle: 'Polenta',
-                    price: 7.0,
-                    img: 'https://wallpapers.com/images/hd/baked-polenta-cornmeal-gmw6vgydd7cnby5e.jpg',
-                    categories: [13],
-                },
-                {
-                    itemId: 108,
-                    itemTitle: 'Croissant',
-                    price: 4.4,
-                    img: 'https://cdn.lifehacker.ru/wp-content/uploads/2021/04/shutterstock_642373528_1619556387-1024x683.jpg',
-                    categories: [14],
-                },
-                {
-                    itemId: 109,
-                    itemTitle: 'Cinnamon Roll',
-                    price: 6.0,
-                    img: 'https://sun9-31.userapi.com/impg/dpGBX0GfGFHcDP35M73CaG2SL-wMCS3hJYCf_A/xxgaoyQv158.jpg?size=930x620&quality=96&sign=4bba8b41d92adffc0ff39195a65dd8c5&type=album',
-                    categories: [14],
-                },
-                {
-                    itemId: 110,
-                    itemTitle: 'Apple Pie',
-                    price: 7.6,
-                    img: 'https://avatars.mds.yandex.net/i?id=8bcfd55e5646661f37bf7adec3099ce2_l-4885466-images-thumbs&n=13',
-                    categories: [14],
-                },
-                {
-                    itemId: 111,
-                    itemTitle: 'Chocolate Fondant',
-                    price: 9.0,
-                    img: 'https://avatars.mds.yandex.net/i?id=d3ceb56f6dbbc1ce95694b749636d42269802cee-13329543-images-thumbs&n=13',
-                    categories: [14],
+                    categories: [5],
                 },
             ]
         },

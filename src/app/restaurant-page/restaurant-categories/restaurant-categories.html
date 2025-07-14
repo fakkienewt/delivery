@@ -1,7 +1,9 @@
 <div class="category-items">
-<div class="menu-text">Menu:</div>
-    <div *ngFor="let cat of categories" class="category" [class.selected]="cat.catId === selectedCategoryId"
+    <div class="menu-text">Menu:</div>
+    <a *ngFor="let cat of categories"
+        class="category"
+        [class.selected]="cat.catId === selectedCategoryId"
         (click)="onCatClick(cat.catId)">
         {{cat.title}}
-    </div>
+    </a>
 </div>

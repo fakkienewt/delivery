@@ -1,0 +1,6 @@
+<div class="cart">
+    <h1 class="cart-text">Cart</h1>
+    <div *ngFor="let cartItem of cartItems$ | async">
+        {{cartItem.title}}
+    </div>
+</div>

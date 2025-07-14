@@ -23,13 +23,11 @@
 
 .rest-title {
     display: flex;
-    transform: translate(-50%, -50%);
-    position: absolute;
+    transform: translate(0%, -120%);
+    position: relative;
     font-size: 35px;
     padding: 5px 10px;
     font-weight: 600;
-    top: 85%;
-    left: 20%;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
     color: white;
     -webkit-text-stroke: 2px black;
@@ -47,17 +45,54 @@
     font-size: 30px;
 }
 
-.cart {
-    display: flex;
-    flex-direction: column;
-    padding: 30px;
+.title {
+    margin-top: 10px;
+    font-size: 20px;
+    padding: 20px 20px 5px 90px;
+    font-size: 27px;
+}
+
+.image {
+    width: 270px;
+    border-radius: 25px;
+}
+
+.category-title {
+    margin: 30px;
     font-size: 25px;
-    align-items: center;
-    width: 500px;
-    height: 550px;
-    margin-top: 20px;
-    margin-left: 20px;
+}
+
+.item {
+    display: flex;
+    flex-direction: row;
+    margin-top: 30px;
     background: white;
     border-radius: 25px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px 0px;
+}
+
+.item-cat {
+    display: flex;
+    flex-direction: column;
+}
+
+.button-add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 130px;
+    height: 60px;
+    background: #5271C0;
+    border-radius: 20px;
+    margin: 0 0 30px 120px;
+    cursor: pointer;
+}
+
+.button-add:hover {
+    background: #95B2F8;
+}
+
+
+.price {
+    font-size: 23px;
+    margin: 0 0 10px 40px;
 }

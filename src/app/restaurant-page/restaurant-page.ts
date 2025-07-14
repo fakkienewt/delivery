@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { AppService } from '../app.service';
 import { MenuItem } from '../models/MenuItem';
 import { MenuCategory } from '../models/MenuCategory';
+import { CategoryWithItems } from '../models/CategoryWithItems';
+import { CartService } from './cart/cart.service';
 
 @Component({
   selector: 'app-restaurant-page',
@@ -12,9 +14,10 @@ import { MenuCategory } from '../models/MenuCategory';
 })
 
 export class RestaurantPage implements OnInit {
-  menu: MenuItem[];
+  categoryWithItems: CategoryWithItems[];
   categories: MenuCategory[];
   rest: { title: string, img: string };
+  restId: number;
 
   selectedCategoryId: number;
 
@@ -26,17 +29,27 @@ export class RestaurantPage implements OnInit {
     return this.rest.title;
   }
 
-  constructor(private route: ActivatedRoute, private appService: AppService) {
+  constructor(private route: ActivatedRoute, 
+    private appService: AppService,
+    private cartService: CartService,
+  ) {
 
   }
   ngOnInit(): void {
-    const restId = +(this.route.snapshot.paramMap.get('id') || 0);
-    this.rest = this.appService.getRestaurant(restId);
-    this.categories = this.appService.getCategories(restId);
+    this.restId = +(this.route.snapshot.paramMap.get('id') || 0);
+    this.rest = this.appService.getRestaurant(this.restId);
+    this.categories = this.appService.getCategories(this.restId);
     this.selectedCategoryId = this.categories[0].catId;
+    this.categoryWithItems = this.appService.getCategoriesWithItems(this.restId);
+    console.log(this.categoryWithItems);
   }
 
   onCategoryChanged(id: number): void {
     this.selectedCategoryId = id;
+  }
+
+  onAddItem(itemId: number): void {
+    // add to cart
+    this.cartService.addItem(this.restId, itemId);
   }
 }
